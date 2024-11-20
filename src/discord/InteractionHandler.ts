@@ -2,9 +2,9 @@ import {ApplicationCommandOptionChoiceData, Collection, Interaction, REST, Route
 import fs from 'fs';
 import path from 'path';
 import {
-    Autocomplete, Button, contextInteractionCommandData, ContextMenuCommand, Modal, SelectMenu, SlashCommand
+    Autocomplete, Button, ContextMenuCommand, Modal, SelectMenu, SlashCommand
 } from "./types";
-import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody, RESTPostAPIContextMenuApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 class InteractionHandler {
     public slashCommands: Collection<string, SlashCommand>;
@@ -171,7 +171,7 @@ class InteractionHandler {
 
             const commandJsonData: object[] = [
                 ...Array.from(this.slashCommands.values()).map((c: SlashCommand): RESTPostAPIChatInputApplicationCommandsJSONBody => c.data.toJSON()),
-                ...Array.from(this.contextCommands.values()).map((c: ContextMenuCommand): contextInteractionCommandData => c.data)
+                ...Array.from(this.contextCommands.values()).map((c: ContextMenuCommand): RESTPostAPIContextMenuApplicationCommandsJSONBody => c.data.toJSON())
             ];
 
             const route: RouteLike = useGlobalInteractions

@@ -1,10 +1,16 @@
 import {ContextMenuCommand} from "../../../types";
-import {ApplicationCommandType, ContextMenuCommandInteraction} from "discord.js"
+import {
+    ApplicationCommandType,
+    ContextMenuCommandBuilder,
+    ContextMenuCommandInteraction,
+    InteractionContextType
+} from "discord.js"
 
 const contextMenu: ContextMenuCommand = {
-    data: {
-        name: 'testificate', type: ApplicationCommandType.Message
-    },
+    data: new ContextMenuCommandBuilder()
+        .setName('testificate')
+        .setType(ApplicationCommandType.Message)
+        .setContexts([InteractionContextType.PrivateChannel, InteractionContextType.BotDM, InteractionContextType.Guild]),
 
 
     async execute(interaction: ContextMenuCommandInteraction) {

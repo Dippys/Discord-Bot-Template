@@ -1,8 +1,8 @@
 import {
     AutocompleteInteraction,
     ButtonInteraction,
-    ChatInputCommandInteraction,
-    ContextMenuCommandInteraction,
+    ChatInputCommandInteraction, ContextMenuCommandBuilder,
+    ContextMenuCommandInteraction, InteractionContextType,
     ModalSubmitInteraction,
     SlashCommandBuilder,
     SlashCommandOptionsOnlyBuilder,
@@ -17,14 +17,9 @@ export interface SlashCommand {
 }
 
 export interface ContextMenuCommand {
-    data: contextInteractionCommandData;
+    data: ContextMenuCommandBuilder;
 
     execute: (interaction: ContextMenuCommandInteraction) => Promise<void>;
-}
-
-export interface contextInteractionCommandData {
-    name: string;
-    type: 2 | 3;
 }
 
 export interface Button {
