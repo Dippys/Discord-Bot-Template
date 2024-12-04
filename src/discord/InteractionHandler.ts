@@ -2,7 +2,7 @@ import {ApplicationCommandOptionChoiceData, Collection, Interaction, REST, Route
 import fs from 'fs';
 import path from 'path';
 import {
-    Autocomplete, Button, ContextMenuCommand, Modal, SelectMenu, SlashCommand
+    Autocomplete, Button, UserContextMenuCommand, MessageContextMenuCommand, Modal, SelectMenu, SlashCommand
 } from "./types";
 import { RESTPostAPIChatInputApplicationCommandsJSONBody, RESTPostAPIContextMenuApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
@@ -10,7 +10,8 @@ class InteractionHandler {
     public slashCommands: Collection<string, SlashCommand>;
     public buttonCommands: Collection<string, Button>;
     public selectCommands: Collection<string, SelectMenu>;
-    public contextCommands: Collection<string, ContextMenuCommand>;
+    public usercontextCommands: Collection<string, UserContextMenuCommand>;
+    public messagecontextCommands: Collection<string, MessageContextMenuCommand>;
     public modalCommands: Collection<string, Modal>;
     public autocompleteInteractions: Collection<string, Autocomplete>;
     readonly token: string;
@@ -28,7 +29,8 @@ class InteractionHandler {
         this.slashCommands = new Collection();
         this.buttonCommands = new Collection();
         this.selectCommands = new Collection();
-        this.contextCommands = new Collection();
+        this.usercontextCommands = new Collection();
+        this.messagecontextCommands = new Collection();
         this.modalCommands = new Collection();
         this.autocompleteInteractions = new Collection();
 
@@ -99,10 +101,17 @@ class InteractionHandler {
 
     async loadContextMenus(): Promise<void> {
         await this.loadModulesFromPath(
-            path.join(this.interactionsFolder, 'context-menus'),
-            this.contextCommands,
-            (module: ContextMenuCommand) : string => module.data?.name,
-            'context menu'
+            path.join(this.interactionsFolder, 'context-menus/user'),
+            this.usercontextCommands,
+            (module: UserContextMenuCommand): string => module.data?.name,
+            'user context menu'
+        );
+
+        await this.loadModulesFromPath(
+            path.join(this.interactionsFolder, 'context-menus/message'),
+            this.messagecontextCommands,
+            (module: MessageContextMenuCommand): string => module.data?.name,
+            'message context menu'
         );
     }
 
@@ -163,7 +172,8 @@ class InteractionHandler {
 
             // Log collection sizes
             console.log(`Slash Commands: ${this.slashCommands.size}`);
-            console.log(`Context Commands: ${this.contextCommands.size}`);
+            console.log(`User Context Commands: ${this.usercontextCommands.size}`);
+            console.log(`Message Context Commands: ${this.messagecontextCommands.size}`);
             console.log(`Button Commands: ${this.buttonCommands.size}`);
             console.log(`Modal Commands: ${this.modalCommands.size}`);
             console.log(`Select Menus: ${this.selectCommands.size}`);
@@ -171,7 +181,8 @@ class InteractionHandler {
 
             const commandJsonData: object[] = [
                 ...Array.from(this.slashCommands.values()).map((c: SlashCommand): RESTPostAPIChatInputApplicationCommandsJSONBody => c.data.toJSON()),
-                ...Array.from(this.contextCommands.values()).map((c: ContextMenuCommand): RESTPostAPIContextMenuApplicationCommandsJSONBody => c.data.toJSON())
+                ...Array.from(this.usercontextCommands.values()).map((c: UserContextMenuCommand): RESTPostAPIContextMenuApplicationCommandsJSONBody => c.data.toJSON()),
+                ...Array.from(this.messagecontextCommands.values()).map((c: MessageContextMenuCommand): RESTPostAPIContextMenuApplicationCommandsJSONBody => c.data.toJSON())
             ];
 
             const route: RouteLike = useGlobalInteractions
@@ -238,13 +249,23 @@ class InteractionHandler {
                 }
             }
 
-            if (interaction.isUserContextMenuCommand() || interaction.isMessageContextMenuCommand()) {
-                const contextMenu : ContextMenuCommand | undefined = this.contextCommands.get(interaction.commandName);
+            if (interaction.isUserContextMenuCommand()) {
+                const contextMenu: UserContextMenuCommand | undefined = this.usercontextCommands.get(interaction.commandName);
                 if (contextMenu) {
                     await contextMenu.execute(interaction);
                     return;
                 } else {
-                    interaction.reply({ content: 'Context menu not found.', ephemeral: true });
+                    interaction.reply({ content: 'User context menu not found.', ephemeral: true });
+                }
+            }
+
+            if (interaction.isMessageContextMenuCommand()) {
+                const contextMenu: MessageContextMenuCommand | undefined = this.messagecontextCommands.get(interaction.commandName);
+                if (contextMenu) {
+                    await contextMenu.execute(interaction);
+                    return;
+                } else {
+                    interaction.reply({ content: 'Message context menu not found.', ephemeral: true });
                 }
             }
         } catch (error) {

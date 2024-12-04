@@ -15,7 +15,8 @@
     "express": "^4.21.1",
     "mysql2": "^3.11.4",
     "raw-body": "^3.0.0",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "node-cache": "^5.1.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

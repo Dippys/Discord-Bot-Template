@@ -1,4 +1,4 @@
-import {ContextMenuCommand} from "../../../types";
+import {UserContextMenuCommand} from "../../../../types";
 import {
     ApplicationCommandType,
     ContextMenuCommandBuilder,
@@ -6,7 +6,7 @@ import {
     InteractionContextType
 } from "discord.js"
 
-const contextMenu: ContextMenuCommand = {
+const contextMenu: UserContextMenuCommand = {
     data: new ContextMenuCommandBuilder()
         .setName('test')
         .setType(ApplicationCommandType.User)

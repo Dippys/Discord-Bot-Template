@@ -1,25 +1,33 @@
 import {
     AutocompleteInteraction,
     ButtonInteraction,
-    ChatInputCommandInteraction, ContextMenuCommandBuilder,
-    ContextMenuCommandInteraction, InteractionContextType,
+    ChatInputCommandInteraction,
+    ContextMenuCommandBuilder,
+    MessageContextMenuCommandInteraction,
     ModalSubmitInteraction,
     SlashCommandBuilder,
     SlashCommandOptionsOnlyBuilder,
-    StringSelectMenuInteraction
+    StringSelectMenuInteraction,
+    UserContextMenuCommandInteraction
 } from 'discord.js';
 import {EventData} from "../web/routes/api/discord";
 
 export interface SlashCommand {
-    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder; // Ensure it's the full builder type
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
     execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 }
 
-export interface ContextMenuCommand {
+export interface UserContextMenuCommand {
     data: ContextMenuCommandBuilder;
 
-    execute: (interaction: ContextMenuCommandInteraction) => Promise<void>;
+    execute: (interaction: UserContextMenuCommandInteraction) => Promise<void>;
+}
+
+export interface MessageContextMenuCommand {
+    data: ContextMenuCommandBuilder;
+
+    execute: (interaction: MessageContextMenuCommandInteraction) => Promise<void>;
 }
 
 export interface Button {

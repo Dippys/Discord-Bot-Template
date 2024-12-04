@@ -5,11 +5,13 @@ import router from "./web/routes/router";
 import EventHandler from "./discord/eventHandler";
 import DotenvManager from "./lib/envManager";
 import EventManager from "./lib/eventManager";
+import CacheManager from "./lib/cacheManager";
 
 DotenvManager.getInstance();
 EventHandler.getInstance().then(() => {});
 EventManager.getInstance();
 Database.getInstance();
+CacheManager.getInstance();
 DiscordManager.getInstance();
 ExpressManager.getInstance().getApp().use("/", router);
 
